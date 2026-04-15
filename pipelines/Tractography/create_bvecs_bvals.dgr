@@ -1,0 +1,91 @@
+[diagram]
+link=[N16] node=[S0:new_bvecs_bvals#Node#U5:text_in]
+link=[N9] node=[A6:#Node#S0:number_zero]
+link=[N5] node=[U2:float_array_values#Node#S0:bvecs]
+link=[N13] node=[A5:#Node#U3:param]
+link=[N7] node=[A1:#Node#S0:orientation]
+link=[N4] node=[A0:#Node#U1:bruker_file]
+link=[N8] node=[A2:#Node#S0:read_direction]
+link=[N11] node=[A4:#Node#U2:param]
+link=[N12] node=[U1:method_file#Node#U2:file]
+link=[N14] node=[U1:method_file#Node#U3:file]
+link=[N6] node=[U3:float_list_values#Node#S0:bvals]
+link=[N17] node=[A7:#Node#U5:file_name]
+constant=[A6] value=[(-100000, 3, 100000)] format=[int] label=[number_zero] RectF=[(318.13, -205.1, 87.0, 31.0)] 
+constant=[A5] value=['PVM_DwEffBval'] format=[str] label=[param] RectF=[(-710.03, -452.65000000000003, 113.0, 35.0)] 
+constant=[A1] value=['sagittal'] format=[enumerate(('axial', 'coronal', 'sagittal'))] label=[A1] RectF=[(322.93, -831.22, 87.0, 31.0)] 
+constant=[A0] value=['/media/olivier/TOFF3/2025_old_Spastin/20250206_150056_SPASTIN_F1023_2025_02_06_SPASTIN_F1023_2025_1_1/7/pdata/1/2dseq'] format=[path] label=[bruker_file] RectF=[(-2112.12, -796.57, 760.0, 35.0)] 
+constant=[A2] value=['H_F'] format=[enumerate(('H_F', 'L_R', 'A_P'))] label=[A2] RectF=[(340.76, -671.36, 65.0, 31.0)] 
+constant=[A4] value=['PVM_DwDir'] format=[str] label=[param] RectF=[(-685.03, -825.0, 91.0, 35.0)] 
+constant=[A7] value=['/tmp/F1023b_bvecs_bvals.txt'] format=[path] label=[file_name] RectF=[(-1549.21, 43.800000000000004, 188.0, 35.0)] 
+block=[U5] category=[FileIO.Txt] class=[save_file_text] valInputs=[(['text_in', 'file_name'], ['Node(N16)', 'Node(N17)'], [], [])] RectF=[(1424.8, 2.83, 150.0, 75.0)] 
+block=[U3] category=[MRImaging.Bruker] class=[bruker_get_value] valInputs=[(['file', 'param'], ['Node(N14)', 'Node(N13)'], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])] RectF=[(-500.0, -650.0, 425.0, 325.0)] 
+block=[U1] category=[MRImaging.Bruker] class=[bruker_get_metadata_files] valInputs=[(['bruker_file'], ['Node(N4)'], ['subject_file', 'visupars_file', 'reco_file', 'method_file', 'acqp_file'], ['path', 'path', 'path', 'path', 'path'])] RectF=[(-1238.39, -815.63, 200.27, 125.0)] 
+script=[S0] title=[Script_python] inputs=[['orientation', 'in', 'str'], ['read_direction', 'in', 'str'], ['bvecs', 'in', 'array_float'], ['bvals', 'in', 'list_float'], ['number_zero', 'in', 'int']] outputs=[['new_bvecs_bvals', 'out', 'str']] code=[your code] RectF=[(550.0, -975.0, 485.0, 928.0)]
+block=[U2] category=[MRImaging.Bruker] class=[bruker_get_value] valInputs=[(['file', 'param'], ['Node(N12)', 'Node(N11)'], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])] RectF=[(-500.0, -1025.0, 425.0, 325.0)] 
+[source S0]
+['bvals=U3:float_list_values', "read_direction='H_F'", "orientation='sagittal'", 'bvecs=U2:float_array_values', 'number_zero=3']
+import numpy as np
+
+def change(M, perm):
+    sign = ['', '', '']
+    colm = perm.copy()
+    for i, ls in enumerate(perm):
+        colm[i] = ls
+        if '-' in ls:
+            sign[i] = '-'
+            colm[i] = ls[1:]
+    order = []
+    [order.append(['r', 'p', 's'].index(colm[i])) for i in range(3)]
+    tmp_array = np.array(M)
+    tmp_array[:,[0, 1, 2]] = tmp_array[:, [order[0], order[1], order[2]]]
+    tmp_array = tmp_array.tolist()
+    for r in range(len(M)):
+        for c in range(3):
+            if '-' in sign[c]:
+                tmp_array[r][c] = str(-1.0 * tmp_array[r][c])
+            else:
+                tmp_array[r][c] = str(tmp_array[r][c])
+
+    return tmp_array
+
+if orientation == 'axial':
+    if read_direction == 'A_P':
+        permut_column = ['p', 's', '-r']
+    elif read_direction == 'L_R':
+        permut_column = ['r', 's', '-p']
+elif orientation == 'coronal':
+    if read_direction == 'H_F':
+        permut_column = ['p', 'r', '-s']
+    elif read_direction == 'L_R':
+        permut_column = ['r', 'p', '-s']
+elif orientation == 'sagittal':
+    if read_direction == 'H_F':
+        permut_column = ['s', 'r', '-p']
+    elif read_direction == 'A_P':
+        permut_column = ['s', 'p', '-r']
+    
+#permut_column = ['-z', '-x', 'y']
+
+new_bvecs = change(bvecs, permut_column)
+print(new_bvecs)
+new_bvecs_bvals = ''
+for i in range(number_zero):
+    new_bvecs_bvals +='0.0 0.0 0.0 0.0\n'
+for i in range(len(new_bvecs)):
+    tmp = new_bvecs[i]
+    tmp.append(str(bvals[i + number_zero]))
+    tmp = ' '.join(tmp) + '\n'
+    new_bvecs_bvals += tmp
+['S0:new_bvecs_bvals']
+[/source S0]
+
+[execution]
+[]
+['U1', 'ThreadOn', 'U2', 'U3', 'ThreadOff', 'S0', 'U5']
+{'U1': ('MRImaging.Bruker', 'bruker_get_metadata_files', "(['bruker_file'], ['/media/olivier/TOFF3/2025_old_Spastin/20250206_150056_SPASTIN_F1023_2025_02_06_SPASTIN_F1023_2025_1_1/7/pdata/1/2dseq'], ['subject_file', 'visupars_file', 'reco_file', 'method_file', 'acqp_file'], ['path', 'path', 'path', 'path', 'path'])"), 'U2': ('MRImaging.Bruker', 'bruker_get_value', "(['file', 'param'], ['U1:method_file', 'PVM_DwDir'], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])"), 'U3': ('MRImaging.Bruker', 'bruker_get_value', "(['file', 'param'], ['U1:method_file', 'PVM_DwEffBval'], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])"), 'U5': ('FileIO.Txt', 'save_file_text', "(['text_in', 'file_name'], ['S0:new_bvecs_bvals', '/tmp/F1023b_bvecs_bvals.txt'], [], [])")}
+['S0:new_bvecs_bvals', 'U2:float_array_values', 'U1:method_file', 'U1:method_file', 'U3:float_list_values']
+{}
+[]
+[interlinks]
+[]

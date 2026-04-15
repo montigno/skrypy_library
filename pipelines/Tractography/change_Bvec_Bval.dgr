@@ -1,0 +1,69 @@
+[diagram]
+link=[N0] node=[A0:#Node#S0:bv_file]
+constant=[A0] value=['/home/olivier/tmp/CEA/souris_F9_bvecs_bvals.txt'] format=[path] label=[A0] RectF=[(-650.0, 200.0, 302.0, 35.0)] 
+script=[S0] title=[Script_python] inputs=[['bv_file', 'in', 'path']] outputs=[] code=[your code] RectF=[(-50.0, -225.0, 857.0, 857.0)]
+[source S0]
+["bv_file='/home/olivier/tmp/CEA/souris_F9_bvecs_bvals.txt'"]
+import os
+import numpy as np
+
+
+def change(M, perm, sign):
+    order = []
+    [order.append(['x', 'y', 'z'].index(perm[i])) for i in range(3)]
+    tmp = M.copy()
+    for i in range(3):
+        tmp[:, i] = M[:, order[i]]
+    for r in range(len(M)):
+        for c in range(3):
+            if '-' in sign[c]:
+                tmp[r][c] = str(-1.0 * float(tmp[r][c]))
+    return tmp
+
+##############################################################################
+number_row_zero = 3
+array1 = [['0.0' for x in range(4)] for y in range(number_row_zero)]
+array2 = []
+with open(bv_file, 'r') as ff:
+    lines = np.genfromtxt(ff, delimiter=' ', dtype=str)
+    array2 = lines[number_row_zero:]
+
+##############################################################################
+# possibilities: [['x', 'y', 'z'], ['x', 'z', 'y'], ['y', 'x', 'z'], ['z', 'x', 'y'], ['y', 'z', 'x'], ['z', 'y', 'x']]
+list_permut_column = [['x', 'y', 'z'], ['x', 'z', 'y'], ['y', 'x', 'z'], ['z', 'x', 'y'], ['y', 'z', 'x'], ['z', 'y', 'x']]
+
+
+# possibilities: [['', '', ''], ['-', '', ''], ['', '-', ''], ['', '', '-'], ['-', '-', ''], ['', '-', '-'], ['-', '', '-'], ['-', '-', '-']]
+list_signs = [['', '', ''], ['-', '', ''], ['', '-', ''], ['', '', '-'], ['-', '-', ''], ['', '-', '-'], ['-', '', '-'], ['-', '-', '-']]
+
+##############################################################################
+
+dir_bv = os.path.dirname(bv_file)
+
+for lp in list_permut_column:
+    for ls in list_signs:
+        suff = [ls[i]+lp[i] for i in range(3)]
+
+        newarray = array1.copy()
+        array4 = change(array2, lp, ls)
+
+        for ar in array4:
+            newarray.append(ar) 
+
+        new_bv = os.path.join(dir_bv, 'bvecs_bvals_{}.txt'.format('_'.join(suff)))
+
+        with open(new_bv, 'w') as nf:
+            for dat in newarray:
+                nf.write(' '.join(dat)+'\n')
+[]
+[/source S0]
+
+[execution]
+[]
+['S0']
+{}
+[]
+{}
+[]
+[interlinks]
+[]

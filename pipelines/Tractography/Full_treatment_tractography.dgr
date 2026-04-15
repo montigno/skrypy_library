@@ -1,0 +1,101 @@
+[diagram]
+link=[N18] node=[A1:#Node#U0:nii_image]
+link=[N17] node=[U5:outString#Node#U1:in_string_list]
+link=[N16] node=[U2:out_value#Node#U4:ndarray_list]
+link=[N15] node=[U0:nii_hdr_dict#Node#U2:input_dict]
+link=[N14] node=[A7:#Node#U2:tag]
+link=[N13] node=[U4:outList#Node#U3:list_float_in]
+link=[N12] node=[A6:#Node#U1:separator]
+link=[N11] node=[U3:index_element#Node#U5:list_float_in]
+link=[N10] node=[S1:list_param#Node#M2:param]
+link=[N8] node=[M0:output_file#Node#M2:mask_den_unr_preproc_unb]
+link=[N7] node=[A5:#Node#M1:number_DWI_volumes]
+link=[N5] node=[A4:#Node#S0:axe]
+link=[N3] node=[A3:#Node#M0:bvec_bval]
+link=[N2] node=[A0:#Node#M0:mask]
+link=[N1] node=[A1:#Node#M0:diffusion_image]
+link=[N4] node=[S0:out_axe#Node#M0:axes]
+link=[N6] node=[M0:dwi_den_unr#Node#M1:dwi_den_unr]
+link=[N9] node=[M1:wmfod_norm#Node#M2:wmfod_norm]
+link=[N0] node=[U1:join_string#Node#M0:vox]
+link=[N19] node=[U1:join_string#Node#P0:Value]
+constant=[A7] value=['pixdim'] format=[str] label=[tag] RectF=[(-1851.81, -119.77, 64.0, 35.0)] 
+constant=[A6] value=[', '] format=[str] label=[separator] RectF=[(-751.8100000000001, -44.77, 32.0, 35.0)] 
+constant=[A5] value=[(-100000, 20, 100000)] format=[int] label=[number_DWI_volumes] RectF=[(123.19, 205.23000000000002, 87.0, 31.0)] 
+constant=[A4] value=['sagittal'] format=[enumerate(('axial', 'coronal', 'sagittal'))] label=[A4] RectF=[(-825.87, 344.68, 87.0, 31.0)] 
+constant=[A1] value=['/home/olivier/tmp/JCD/test2/SL21_M88-SL21_M88_2022_11_05-2022-11-05083837-10-pv7_DtiStd_Ref4ch_v1-Userpv7_DtiStd_Ref4ch_v1-092915_000.nii'] format=[path] label=[diffusion_image] RectF=[(-2976.86, -513.2, 868.0, 35.0)] 
+constant=[A0] value=['/home/olivier/tmp/JCD/test2/SL21_M88_mask.nii'] format=[path] label=[mask] RectF=[(-997.0500000000001, -443.85, 298.0, 35.0)] 
+constant=[A3] value=['/home/olivier/tmp/JCD/test2/SL21_M88_bvecs_bvals.txt'] format=[path] label=[diffusion_image] RectF=[(-1164.32, 159.3, 336.0, 35.0)] 
+probe=[P0] label=[Value] format=[str] RectF=[(-401.81, -119.77, 70, 24)] 
+block=[U5] category=[Tools.Float_list] class=[float_list_to_string_list] valInputs=[(['list_float_in'], ['Node(N11)'], ['outString'], ['list_str'])] RectF=[(-926.8100000000001, -144.77, 181.62, 75.0)] 
+block=[U4] category=[Numpy.Conversion] class=[numpy_ndarray_to_float_list] valInputs=[(['ndarray_list'], ['Node(N16)'], ['outList'], ['list_float'])] RectF=[(-1426.81, -169.77, 175.0, 75.0)] 
+block=[U3] category=[Tools.Float_list] class=[float_list_get_sublist] valInputs=[(['list_float_in', 'index_start', 'index_end'], ['Node(N13)', 1, 4], ['index_element'], ['list_float'])] RectF=[(-1201.81, -144.77, 225.0, 75.0)] 
+block=[U2] category=[Tools.Dictionnary] class=[dict_get_value_dyn] valInputs=[(['input_dict', 'tag'], ['Node(N15)', 'Node(N14)'], ['out_value', 'out_value_dict'], ['str', 'dict'])] RectF=[(-1701.81, -169.77, 208.52, 75.0)] 
+block=[U1] category=[Tools.String_list] class=[string_list_join] valInputs=[(['in_string_list', 'separator'], ['Node(N17)', 'Node(N12)'], ['join_string'], ['str'])] RectF=[(-651.8100000000001, -94.77, 201.28, 75.0)] 
+block=[U0] category=[Images.Nifti] class=[nifti_get_header] valInputs=[(['nii_image'], ['Node(N18)'], ['nii_hdr', 'nii_hdr_dict'], ['str', 'dict'])] RectF=[(-1976.81, -244.77, 200.0, 75.0)] 
+submod=[M2] nameMod=[tensormetric_tractograph] catMod=[Diffusion] valInputs=[(['mask_den_unr_preproc_unb', 'wmfod_norm', 'param'], ['Node(N8)', 'Node(N9)', 'Node(N10)'], [], [])] RectF=[(1343.98, -223.98000000000002, 325.0, 475.0)] 
+submod=[M0] nameMod=[tensormetric_partie1] catMod=[Diffusion] valInputs=[(['mask', 'diffusion_image', 'vox', 'bvec_bval', 'axes'], ['Node(N2)', 'Node(N1)', 'Node(N0)', 'Node(N3)', 'Node(N4)'], ['output_file', 'dwi_den_unr'], ['path', 'path'])] RectF=[(-173.07, -246.64000000000001, 275.0, 350.0)] 
+script=[S0] title=[Script_python] inputs=[['axe', 'in', 'str']] outputs=[['out_axe', 'out', 'str']] code=[your code] RectF=[(-651.8100000000001, 280.23, 252.0, 159.0)]
+submod=[M1] nameMod=[tensormetric_partie2] catMod=[Diffusion] valInputs=[(['dwi_den_unr', 'number_DWI_volumes'], ['Node(N6)', 'Node(N7)'], ['wmfod_norm'], ['path'])] RectF=[(298.19, 30.23, 300.0, 225.0)] 
+script=[S1] title=[Script_python] inputs=[] outputs=[['list_param', 'out', 'list_str']] code=[your code] RectF=[(773.19, 205.23000000000002, 305.0, 311.0)]
+[source S0]
+["axe='sagittal'"]
+if axe == 'axial':
+    out_axe = '0,1'
+elif axe == 'coronal':
+    out_axe = '0,2'
+elif axe == 'sagittal':
+    out_axe = '1,2'
+['S0:out_axe']
+[/source S0]
+[source S1]
+[]
+numberOfStreamlineVector = [3]
+cutoffVector = [0.23, 0.24, 0.25, 0.26, 0.27, 0.28]
+stepSizeVector = [0.01]
+curvature = 0.07
+nThreads = 8
+siftTypeArray = ['None']
+siftValueArray = [0.3]
+
+list_param = [numberOfStreamlineVector,
+                            cutoffVector,
+                            stepSizeVector,
+                            curvature,
+                            nThreads,
+                            siftTypeArray,
+                            siftValueArray]
+
+['S1:list_param']
+[/source S1]
+
+[execution]
+[]
+['S0', 'S1', 'U0', 'U2', 'U4', 'U3', 'U5', 'U1', 'M0', 'M1', 'M2', 'P0']
+{'U0': ('Images.Nifti', 'nifti_get_header', "(['nii_image'], ['/home/olivier/tmp/JCD/test2/SL21_M88-SL21_M88_2022_11_05-2022-11-05083837-10-pv7_DtiStd_Ref4ch_v1-Userpv7_DtiStd_Ref4ch_v1-092915_000.nii'], ['nii_hdr', 'nii_hdr_dict'], ['str', 'dict'])"), 'U2': ('Tools.Dictionnary', 'dict_get_value_dyn', "(['input_dict', 'tag'], ['U0:nii_hdr_dict', 'pixdim'], ['out_value', 'out_value_dict'], ['str', 'dict'])"), 'U4': ('Numpy.Conversion', 'numpy_ndarray_to_float_list', "(['ndarray_list'], ['U2:out_value'], ['outList'], ['list_float'])"), 'U3': ('Tools.Float_list', 'float_list_get_sublist', "(['list_float_in', 'index_start', 'index_end'], ['U4:outList', 1, 4], ['index_element'], ['list_float'])"), 'U5': ('Tools.Float_list', 'float_list_to_string_list', "(['list_float_in'], ['U3:index_element'], ['outString'], ['list_str'])"), 'U1': ('Tools.String_list', 'string_list_join', "(['in_string_list', 'separator'], ['U5:outString', ', '], ['join_string'], ['str'])"), 'P0': ('str', 'Value', 'U1:join_string')}
+['U5:outString', 'U2:out_value', 'U0:nii_hdr_dict', 'U4:outList', 'U3:index_element', 'S1:list_param', 'M0:output_file', 'S0:out_axe', 'M0:dwi_den_unr', 'M1:wmfod_norm', 'U1:join_string', 'U1:join_string']
+{'M0': ('tensormetric_partie1', 'Diffusion', "(['mask', 'diffusion_image', 'vox', 'bvec_bval', 'axes'], ['/home/olivier/tmp/JCD/test2/SL21_M88_mask.nii', '/home/olivier/tmp/JCD/test2/SL21_M88-SL21_M88_2022_11_05-2022-11-05083837-10-pv7_DtiStd_Ref4ch_v1-Userpv7_DtiStd_Ref4ch_v1-092915_000.nii', 'U1:join_string', '/home/olivier/tmp/JCD/test2/SL21_M88_bvecs_bvals.txt', 'S0:out_axe'], ['output_file', 'dwi_den_unr'], ['path', 'path'])"), 'M1': ('tensormetric_partie2', 'Diffusion', "(['dwi_den_unr', 'number_DWI_volumes'], ['M0:dwi_den_unr', 20], ['wmfod_norm'], ['path'])"), 'M2': ('tensormetric_tractograph', 'Diffusion', "(['mask_den_unr_preproc_unb', 'wmfod_norm', 'param'], ['M0:output_file', 'M1:wmfod_norm', 'S1:list_param'], [], [])")}
+[]
+[submod M2]
+['C0:mask_den_unr_preproc_unb=M0:output_file', 'C1:wmfod_norm=M1:wmfod_norm', 'C2:param=S1:list_param']
+['S0']
+{}
+[]
+{}
+[]
+[submod M0]
+['C2:mask=/home/olivier/tmp/JCD/test2/SL21_M88_mask.nii', 'C0:diffusion_image=/home/olivier/tmp/JCD/test2/SL21_M88-SL21_M88_2022_11_05-2022-11-05083837-10-pv7_DtiStd_Ref4ch_v1-Userpv7_DtiStd_Ref4ch_v1-092915_000.nii', 'C6:vox=U1:join_string', 'C1:bvec_bval=/home/olivier/tmp/JCD/test2/SL21_M88_bvecs_bvals.txt', 'C5:axes=S0:out_axe']
+['U1', 'U2', 'U3', 'ThreadOn', 'U4', 'U11', 'ThreadOff', 'ThreadOn', 'U5', 'U0', 'ThreadOff', 'ThreadOn', 'U14', 'U13', 'U25', 'ThreadOff', 'ThreadOn', 'U15', 'U27', 'ThreadOff', 'ThreadOn', 'U18', 'U16', 'U17', 'U28', 'ThreadOff', 'ThreadOn', 'U30', 'U20', 'ThreadOff', 'ThreadOn', 'U26', 'U22', 'U12', 'U23', 'U29', 'ThreadOff', 'U31', 'U32', 'U36', 'U35', 'U34', 'U33', 'U19', 'U21', 'U24', 'U37']
+{'U1': ('Tools.Path', 'path_separate', "(['path_in'], ['C0:diffusion_image'], ['directory', 'nameFile', 'extension'], ['path', 'str', 'str'])"), 'U2': ('Tools.Path', 'path_join_dyn', "(['path_in', 'path_name'], ['U1:directory', 'Tractography'], ['outFile'], ['path'])"), 'U3': ('FileIO.Tools', 'create_directory', "(['dir_in'], ['U2:outFile'], ['out_dir'], ['path'])"), 'U4': ('Tools.Path', 'path_join_dyn', "(['path_in', 'path_name'], ['U3:out_dir', 'dwi_raw.mif'], ['outFile'], ['path'])"), 'U11': ('Tools.Path', 'path_join_dyn', "(['path_in', 'path_name'], ['U3:out_dir', 'mask_den_unr_preproc_unb.mif'], ['outFile'], ['path'])"), 'U5': ('MRImaging.Mrtrix3', 'mrtrix3_mrconvert', "(['input', 'output'], ['C2:mask', 'U11:outFile'], ['output_file'], ['path'])"), 'U0': ('MRImaging.Mrtrix3', 'mrtrix3_mrconvert', "(['input', 'output', 'vox', 'grad', 'force'], ['C0:diffusion_image', 'U4:outFile', 'C6:vox', 'C1:bvec_bval', ''], ['output_file'], ['path'])"), 'U14': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U0:output_file', 'noise.mif'], ['out_new_file'], ['path'])"), 'U13': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U0:output_file', 'dwi_den.mif'], ['out_new_file'], ['path'])"), 'U25': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U5:output_file', 'dwi_tensor.mif'], ['out_new_file'], ['path'])"), 'U15': ('MRImaging.Mrtrix3', 'mrtrix3_dwidenoise', "(['mif_image', 'dwi_out', 'noise'], ['U0:output_file', 'U13:out_new_file', 'U14:out_new_file'], ['dwidenoise'], ['path'])"), 'U27': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U25:out_new_file', 'ADC_map.mif'], ['out_new_file'], ['path'])"), 'U18': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U15:dwidenoise', 'dwi_den_unr.mif'], ['out_new_file'], ['path'])"), 'U16': ('Tools.Path', 'path_to_list_dyn', "(['path_in', 'path_in_0'], ['U0:output_file', 'U15:dwidenoise'], ['ListPath'], ['list_path'])"), 'U17': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U15:dwidenoise', 'residual.mif'], ['out_new_file'], ['path'])"), 'U28': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U27:out_new_file', 'FA_map.mif'], ['out_new_file'], ['path'])"), 'U30': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U28:out_new_file', 'AD_map.mif'], ['out_new_file'], ['path'])"), 'U20': ('MRImaging.Mrtrix3', 'mrtrix3_mrdegibbs', "(['mif_image', 'mrdegibbs_out', 'axes'], ['U15:dwidenoise', 'U18:out_new_file', 'C5:axes'], ['mrdegibbs'], ['path'])"), 'U26': ('MRImaging.Mrtrix3', 'mrtrix3_dwi2tensor2', "(['dwi_input', 'dwi2tensor_out', 'mask'], ['U20:mrdegibbs', 'U25:out_new_file', 'U5:output_file'], ['dwi2tensor'], ['path'])"), 'U22': ('Tools.Path', 'path_to_list_dyn', "(['path_in', 'path_in_0'], ['U15:dwidenoise', 'U20:mrdegibbs'], ['ListPath'], ['list_path'])"), 'U12': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U20:mrdegibbs', 'mask_den_unr_preproc_unb_auto-obtained-by-dwi2mask.mif'], ['out_new_file'], ['path'])"), 'U23': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U20:mrdegibbs', 'residualUnringed.mif'], ['out_new_file'], ['path'])"), 'U29': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U30:out_new_file', 'RD_map.mif'], ['out_new_file'], ['path'])"), 'U31': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U29:out_new_file', 'CL_map.mif'], ['out_new_file'], ['path'])"), 'U32': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U31:out_new_file', 'CP_map.mif'], ['out_new_file'], ['path'])"), 'U36': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U32:out_new_file', 'CS_map.mif'], ['out_new_file'], ['path'])"), 'U35': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U36:out_new_file', 'EigenValue_map.mif'], ['out_new_file'], ['path'])"), 'U34': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U35:out_new_file', 'EigenVector_map.mif'], ['out_new_file'], ['path'])"), 'U33': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U34:out_new_file', 'mask_den_unr_preproc_unb.mif'], ['out_new_file'], ['path'])"), 'U19': ('MRImaging.Mrtrix3', 'mrtrix3_mrcalc', "(['mif_images', 'mrcalc_out', 'subtract'], ['U16:ListPath', ['path'], 'U17:out_new_file'], ['mrcalc'], ['path'])"), 'U21': ('MRImaging.Mrtrix3', 'mrtrix3_dwi2mask', "(['mif_image', 'dwi2mask_out'], ['U20:mrdegibbs', 'U12:out_new_file'], ['dwi2mask'], ['path'])"), 'U24': ('MRImaging.Mrtrix3', 'mrtrix3_mrcalc', "(['mif_images', 'mrcalc_out', 'subtract'], ['U22:ListPath', ['path'], 'U23:out_new_file'], ['mrcalc'], ['path'])"), 'U37': ('MRImaging.Mrtrix3', 'mrtrix3_tensor2metric2', "(['tensor', 'adc', 'fa', 'ad', 'rd', 'cl', 'cp', 'cs', 'value', 'vector', 'mask'], ['U26:dwi2tensor', 'U27:out_new_file', 'U28:out_new_file', 'U30:out_new_file', 'U29:out_new_file', 'U31:out_new_file', 'U32:out_new_file', 'U36:out_new_file', 'U35:out_new_file', 'U34:out_new_file', 'U33:out_new_file'], [], [])")}
+['U26:dwi2tensor', 'U27:out_new_file', 'U30:out_new_file', 'U31:out_new_file', 'U36:out_new_file', 'U34:out_new_file', 'U35:out_new_file', 'U32:out_new_file', 'U29:out_new_file', 'U28:out_new_file', 'U25:out_new_file', 'U20:mrdegibbs', 'U22:ListPath', 'U15:dwidenoise', 'U20:mrdegibbs', 'U20:mrdegibbs', 'U18:out_new_file', 'U17:out_new_file', 'U16:ListPath', 'U15:dwidenoise', 'U0:output_file', 'U0:output_file', 'U14:out_new_file', 'U0:output_file', 'U11:outFile', 'U3:out_dir', 'U1:directory', 'U2:outFile', 'U4:outFile', 'U3:out_dir', 'U5:output_file', 'U0:output_file', 'U13:out_new_file', 'U15:dwidenoise', 'U15:dwidenoise', 'U15:dwidenoise', 'U12:out_new_file', 'U20:mrdegibbs', 'U20:mrdegibbs', 'U23:out_new_file', 'U5:output_file', 'U5:output_file', 'U20:mrdegibbs', 'U27:out_new_file', 'U30:out_new_file', 'U31:out_new_file', 'U36:out_new_file', 'U34:out_new_file', 'U33:out_new_file', 'U35:out_new_file', 'U32:out_new_file', 'U29:out_new_file', 'U28:out_new_file', 'U25:out_new_file']
+{}
+['M0:output_file=U5:output_file', 'M0:dwi_den_unr=U20:mrdegibbs']
+[submod M1]
+['C0:dwi_den_unr=M0:dwi_den_unr', 'C2:number_DWI_volumes=20']
+['U1', 'U3', 'U4', 'U5', 'U6', 'U15', 'ThreadOn', 'U2', 'U16', 'ThreadOff', 'U0', 'U7', 'U8', 'ThreadOn', 'U14', 'U10', 'U12', 'ThreadOff', 'U11', 'P0', 'U9', 'U13']
+{'U1': ('Tools.Path', 'path_to_list_dyn', "(['path_in'], ['C0:dwi_den_unr'], ['ListPath'], ['list_path'])"), 'U3': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['C0:dwi_den_unr', 'wmfod.mif'], ['out_new_file'], ['path'])"), 'U4': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['C0:dwi_den_unr', 'mask_den_unr_preproc_unb.mif'], ['out_new_file'], ['path'])"), 'U5': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['C0:dwi_den_unr', 'Voxels.mif'], ['out_new_file'], ['path'])"), 'U6': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['C0:dwi_den_unr', 'wm_response.txt'], ['out_new_file'], ['path'])"), 'U15': ('MRImaging.Mrtrix3', 'mrtrix3_lmax', "(['number_DWI_volumes'], ['C2:number_DWI_volumes'], ['lmax'], ['int'])"), 'U2': ('Tools.Path', 'path_to_list_dyn', "(['path_in'], ['U6:out_new_file'], ['ListPath'], ['list_path'])"), 'U16': ('Tools.Int', 'int_to_string', "(['int_in'], ['U15:lmax'], ['outString'], ['str'])"), 'U0': ('MRImaging.Mrtrix3', 'mrtrix3_dwi2response', "(['algorithm', 'inputs', 'outputs', 'mask', 'voxels', 'lmax'], ['tournier', 'U1:ListPath', 'U2:ListPath', 'U4:out_new_file', 'U5:out_new_file', 'U16:outString'], ['dwi2response'], ['list_path'])"), 'U7': ('Tools.Path_list', 'path_list_getElement', "(['list_path_in', 'index'], ['U0:dwi2response', 0], ['outPath'], ['path'])"), 'U8': ('MRImaging.Mrtrix3', 'mrtrix3_dwi2fod', "(['algorithm', 'dwi', 'response', 'odf', 'lmax', 'mask'], ['csd', 'C0:dwi_den_unr', 'U7:outPath', 'U3:out_new_file', 'U16:outString', 'U4:out_new_file'], ['dwi2fod'], ['path'])"), 'U14': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U8:dwi2fod', 'vf.mif'], ['out_new_file'], ['path'])"), 'U10': ('Tools.Path', 'path_to_list_dyn', "(['path_in'], ['U8:dwi2fod'], ['ListPath'], ['list_path'])"), 'U12': ('Tools.Path', 'path_change_name', "(['path_in', 'new_name'], ['U8:dwi2fod', 'wmfod_norm.mif'], ['out_new_file'], ['path'])"), 'U11': ('Tools.Path', 'path_to_list_dyn', "(['path_in'], ['U12:out_new_file'], ['ListPath'], ['list_path'])"), 'P0': ('int', 'Value', 'U15:lmax'), 'U9': ('MRImaging.Mrtrix3', 'mrtrix3_mtnormalise', "(['inputs', 'outputs', 'mask'], ['U10:ListPath', 'U11:ListPath', 'U4:out_new_file'], ['mrcalc'], ['list_path'])"), 'U13': ('MRImaging.Mrtrix3', 'mrtrix3_mrconvert', "(['input', 'output', 'coord'], ['U8:dwi2fod', 'U14:out_new_file', '3 0'], ['output_file'], ['path'])")}
+['U15:lmax', 'U16:outString', 'U4:out_new_file', 'U8:dwi2fod', 'U14:out_new_file', 'U8:dwi2fod', 'U12:out_new_file', 'U11:ListPath', 'U10:ListPath', 'U7:outPath', 'U0:dwi2response', 'U6:out_new_file', 'U2:ListPath', 'U1:ListPath', 'U4:out_new_file', 'U5:out_new_file', 'U3:out_new_file', 'U8:dwi2fod', 'U4:out_new_file', 'U8:dwi2fod', 'U12:out_new_file', 'U16:outString', 'U15:lmax']
+{}
+['M1:wmfod_norm=U12:out_new_file']
+[interlinks]
+[]

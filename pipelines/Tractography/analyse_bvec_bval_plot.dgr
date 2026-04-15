@@ -1,0 +1,91 @@
+[diagram]
+link=[N10] node=[U0:float_array_values#Node#S0:array_bv2]
+link=[N8] node=[U3:method_file#Node#U1:file]
+link=[N7] node=[U3:method_file#Node#U0:file]
+link=[N6] node=[A0:#Node#U0:param]
+link=[N5] node=[A3:#Node#U3:bruker_file]
+link=[N4] node=[A1:#Node#U1:param]
+link=[N3] node=[A4:#Node#U4:access]
+link=[N2] node=[A5:#Node#U4:file]
+link=[N1] node=[A2:#Node#U4:delimiter]
+link=[N0] node=[U4:array_csv#Node#U2:array_string_in]
+link=[N9] node=[U1:float_array_values#Node#S0:array_bv1]
+link=[N11] node=[U2:outArrayFloat#Node#S0:array_bv3]
+link=[N12] node=[A6:#Node#S0:subplot]
+constant=[A5] value=['/home/olivier/tmp/JCD/test2/SL21_F102_bvecs_bvals.txt'] format=[path] label=[file] RectF=[(-950.0, 25.0, 339.0, 35.0)] 
+constant=[A4] value=['row'] format=[enumerate(('row','column'))] label=[access] RectF=[(-725.0, 100.0, 86.0, 31.0)] 
+constant=[A3] value=['/home/olivier/tmp/JCD/20221023_191540_SL21_F102_SL21_F102_2022_10_23_1_1/7/pdata/1/2dseq'] format=[path] label=[bruker_file] RectF=[(-1450.0, -375.0, 580.0, 35.0)] 
+constant=[A2] value=[' '] format=[str] label=[delimiter] RectF=[(-600.0, 175.0, 29.0, 35.0)] 
+constant=[A1] value=['PVM_DwGradVec=('] format=[str] label=[param] RectF=[(-650.0, -550.0, 132.0, 35.0)] 
+constant=[A0] value=['PVM_DwDir=('] format=[str] label=[param] RectF=[(-550.0, -125.0, 102.0, 35.0)] 
+constant=[A6] value=['False'] format=[bool] label=[subplot] RectF=[(-25.0, 350.0, 73.0, 31.0)] 
+block=[U4] category=[FileIO.Csv] class=[csv_open_file] valInputs=[(['file', 'access', 'delimiter'], ['Node(N2)', 'Node(N3)', 'Node(N1)'], ['array_csv'], ['array_str'])] RectF=[(-400.0, 125.0, 175.0, 75.0)] 
+block=[U3] category=[MRImaging.Bruker] class=[bruker_get_metadata_files] valInputs=[(['bruker_file'], ['Node(N5)'], ['subject_file', 'visupars_file', 'reco_file', 'method_file', 'acqp_file'], ['path', 'path', 'path', 'path', 'path'])] RectF=[(-775.0, -425.0, 200.0, 125.0)] 
+block=[U2] category=[Tools.String_array] class=[string_array_to_float_array] valInputs=[(['array_string_in'], ['Node(N0)'], ['outArrayFloat'], ['array_float'])] RectF=[(-175.0, 125.0, 250.0, 75.0)] 
+block=[U1] category=[MRImaging.Bruker] class=[bruker_get_value] valInputs=[(['file', 'param'], ['Node(N8)', 'Node(N4)'], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])] RectF=[(-350.0, -600.0, 250.0, 250.0)] 
+block=[U0] category=[MRImaging.Bruker] class=[bruker_get_value] valInputs=[(['file', 'param'], ['Node(N7)', 'Node(N6)'], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])] RectF=[(-350.0, -275.0, 250.0, 250.0)] 
+script=[S0] title=[Script_python] inputs=[['array_bv1', 'in', 'array_float'], ['array_bv2', 'in', 'array_float'], ['array_bv3', 'in', 'array_float'], ['subplot', 'in', 'bool']] outputs=[] code=[your code] RectF=[(175.0, -425.0, 630.0, 985.0)]
+[source S0]
+['subplot=False', 'array_bv3=U2:outArrayFloat', 'array_bv1=U1:float_array_values', 'array_bv2=U0:float_array_values']
+from NodeEditor.modules.Tools.Float_array import float_array_getColumn
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+
+def multi_plot(fig, x, y, z , pos, title):
+    x, y, z = np.array(x), np.array(y), np.array(z)
+    if subplot:
+        ax = fig.add_subplot(1, 3, pos, projection='3d')
+    else:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+    ax.plot(x, y, z, c='r', marker='o')
+    j=1
+    for xs, ys, zs in zip(x, y, z):
+        ax.text(xs, ys, zs, str(j), color="blue", fontsize=12)
+        j += 1
+    ax.set_xlim3d(-1, 1)
+    ax.set_ylim3d(-1, 1)
+    ax.set_zlim3d(-1, 1)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title(title)
+
+if subplot:
+    fig = plt.figure()
+else:
+    fig = ''
+
+array_bv1 = array_bv1[3:]
+x1 = float_array_getColumn(array_bv1, 0).outColumn()
+y1 = float_array_getColumn(array_bv1, 1).outColumn()
+z1 = float_array_getColumn(array_bv1, 2).outColumn()
+multi_plot(fig, x1, y1, z1, 1, "DwGradVec")
+
+x2 = float_array_getColumn(array_bv2, 0).outColumn()
+y2 = float_array_getColumn(array_bv2, 1).outColumn()
+z2 = float_array_getColumn(array_bv2, 2).outColumn()
+multi_plot(fig, x2, y2, z2, 2, "DwDir")
+
+array_bv3 = array_bv3[3:]
+x3 = float_array_getColumn(array_bv3, 0).outColumn()
+y3 = float_array_getColumn(array_bv3, 1).outColumn()
+z3 = float_array_getColumn(array_bv3, 2).outColumn()
+multi_plot(fig, x3, y3, z3, 3, "Bvecs from file")
+
+plt.show()
+[]
+[/source S0]
+
+[execution]
+[]
+['U3', 'U4', 'ThreadOn', 'U1', 'U0', 'U2', 'ThreadOff', 'S0']
+{'U3': ('MRImaging.Bruker', 'bruker_get_metadata_files', "(['bruker_file'], ['/home/olivier/tmp/JCD/20221023_191540_SL21_F102_SL21_F102_2022_10_23_1_1/7/pdata/1/2dseq'], ['subject_file', 'visupars_file', 'reco_file', 'method_file', 'acqp_file'], ['path', 'path', 'path', 'path', 'path'])"), 'U4': ('FileIO.Csv', 'csv_open_file', "(['file', 'access', 'delimiter'], ['/home/olivier/tmp/JCD/test2/SL21_F102_bvecs_bvals.txt', 'row', ' '], ['array_csv'], ['array_str'])"), 'U1': ('MRImaging.Bruker', 'bruker_get_value', "(['file', 'param'], ['U3:method_file', 'PVM_DwGradVec=('], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])"), 'U0': ('MRImaging.Bruker', 'bruker_get_value', "(['file', 'param'], ['U3:method_file', 'PVM_DwDir=('], ['float_array_values', 'float_list_values', 'float_value', 'int_array_values', 'int_list_values', 'int_value', 'str_value'], ['array_float', 'list_float', 'float', 'array_int', 'list_int', 'int', 'str'])"), 'U2': ('Tools.String_array', 'string_array_to_float_array', "(['array_string_in'], ['U4:array_csv'], ['outArrayFloat'], ['array_float'])")}
+['U0:float_array_values', 'U3:method_file', 'U3:method_file', 'U4:array_csv', 'U1:float_array_values', 'U2:outArrayFloat']
+{}
+[]
+[interlinks]
+[]

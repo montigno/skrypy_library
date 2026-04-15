@@ -18,20 +18,25 @@ class raw_display:
         import subprocess
         import nibabel as nib
         import numpy as np
-        from datetime import datetime
+        from pathlib import Path
+        import tempfile
+
         image = np.array(image)
         img = nib.Nifti1Image(image, np.eye(4))
-        name_file = '/tmp/tmpNifti{}.nii'.format(datetime.now())
+        tmp_folder = tempfile.gettempdir()
+        name_file = 'tmpRawNifti.nii'
+        name_file = os.path.join(tmp_folder, name_file)
         n_header = img.header
         n_header['xyzt_units'] = 10
         nib.save(img, name_file)
-        current_dir_path = os.path.abspath(os.path.join(__file__, "../../.."))
+        # current_dir_path = os.path.abspath(os.path.join(__file__, "../../.."))
+        current_dir_path = Path(__file__).parents[2]
         source_disp = os.path.join(current_dir_path, 'api', 'dispNifti.py')
-        p = subprocess.Popen([sys.executable, source_disp, name_file, title, 'yes'],
-                             shell=False,
-                             stdin=None,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        subprocess.Popen([sys.executable, source_disp, name_file, title, 'yes'],
+                         shell=False,
+                         stdin=None,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
 
 ##############################################################################
 
@@ -61,5 +66,5 @@ class raw_open_image():
         # self.npimg = self.npimg.reshape(tuple(reversed(imageSize)))
         self.npimg = self.npimg.reshape(imageSize, order='F')
 
-    def raw_image(self: 'array_float'):
+    def raw_image(self) -> list[list[float]]:
         return self.npimg

@@ -5,11 +5,11 @@ class nifti_display:
         import subprocess
         current_dir_path = os.path.abspath(os.path.join(__file__, "../../.."))
         source_disp = os.path.join(current_dir_path, r'api', r'dispNifti.py')
-        p = subprocess.Popen([sys.executable, source_disp, image, title, 'no'],
-                             shell=False,
-                             stdin=None,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        subprocess.Popen([sys.executable, source_disp, image, title, 'no'],
+                         shell=False,
+                         stdin=None,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
 
 ##############################################################################
 
@@ -21,10 +21,10 @@ class nifti_get_header():
         img = nib.load(nii_image)
         self.hdr = img.header
 
-    def nii_hdr(self: 'str'):
+    def nii_hdr(self) -> str:
         return self.hdr
 
-    def nii_hdr_dict(self: 'dict'):
+    def nii_hdr_dict(self) -> dict:
         return dict(self.hdr)
 
 ##############################################################################
@@ -80,7 +80,6 @@ class nifti_change_header():
                  new_value='',
                  outfile='path'):
         import nibabel as nib
-        import os
         img = nib.load(nifti_file)
         hdr = img.header.copy()
         hdr[structarr] = new_value
@@ -88,7 +87,7 @@ class nifti_change_header():
         nib.save(new_nifti, outfile)
         self.outf = outfile
 
-    def outfile(self: 'path'):
+    def outfile(self) -> None:
         return self.outf
 
 ##############################################################################
@@ -111,13 +110,13 @@ class nifti_open_file:
         else:
             print('no Nifti file')
 
-    def image(self: 'array_float'):
+    def image(self) -> list[list[float]]:
         return self.img
 
-    def dim(self: 'int'):
+    def dim(self) -> int:
         return self.dim
 
-    def pixdim(self: 'list_float'):
+    def pixdim(self) -> list[float]:
         return self.pxd
 
 ##############################################################################
@@ -151,7 +150,7 @@ class nifti_save_file:
             print(hdr)
         nib.save(img, self.fileSaved)
 
-    def pathFile(self: 'path'):
+    def pathFile(self) -> None:
         return self.fileSaved
 
 ##############################################################################
@@ -160,12 +159,11 @@ class nifti_save_file:
 class nifti_get_slope_inter():
     def __init__(self, nifti_file='path'):
         import nibabel as nib
-        import os
         img = nib.load(nifti_file)
         hdr = img.header.copy()
         self.slope_inter = hdr.get_slope_inter()
 
-    def slope_inter(self: 'tuple'):
+    def slope_inter(self) -> tuple:
         return self.slope_inter
 
 ##############################################################################
@@ -174,7 +172,6 @@ class nifti_get_slope_inter():
 class nifti_set_slope_inter():
     def __init__(self, nifti_file='path', slope=1.0, intercept=0.0, outfile='path'):
         import nibabel as nib
-        import os
         img = nib.load(nifti_file)
         hdr = img.header.copy()
         data_img = img.get_fdata().copy()
@@ -183,7 +180,7 @@ class nifti_set_slope_inter():
         nib.save(new_nifti, outfile)
         self.outf = outfile
 
-    def outfile(self: 'path'):
+    def outfile(self) -> None:
         return self.outf
 
 ##############################################################################
@@ -192,12 +189,11 @@ class nifti_set_slope_inter():
 class nifti_get_cal_max_min():
     def __init__(self, nifti_file='path'):
         import nibabel as nib
-        import os
         img = nib.load(nifti_file)
         hdr = img.header.copy()
         self.cal_max_min = (hdr['cal_max'], hdr['cal_min'])
 
-    def slope_inter(self: 'tuple'):
+    def slope_inter(self) -> tuple:
         return self.cal_max_min
 
 ##############################################################################
@@ -206,7 +202,6 @@ class nifti_get_cal_max_min():
 class nifti_set_cal_max_min():
     def __init__(self, nifti_file='path', cal_max=100.0, cal_min=0.0, outfile='path'):
         import nibabel as nib
-        import os
         img = nib.load(nifti_file)
         hdr = img.header.copy()
         data_img = img.get_fdata().copy()
@@ -215,7 +210,23 @@ class nifti_set_cal_max_min():
         nib.save(new_nifti, outfile)
         self.outf = outfile
 
-    def outfile(self: 'path'):
+    def outfile(self) -> None:
+        return self.outf
+
+##############################################################################
+
+
+class nifti_set_affine():
+    def __init__(self, nifti_file='path', matrix=[[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.]], outfile='path'):
+        import nibabel as nib
+        img = nib.load(nifti_file)
+        hdr = img.header.copy()
+        hdr['srow_x'], hdr['srow_y'], hdr['srow_z'] = matrix[0], matrix[1], matrix[2]
+        new_nifti = nib.Nifti1Image(img.get_fdata().copy(), None, header=hdr)
+        nib.save(new_nifti, outfile)
+        self.outf = outfile
+
+    def outfile(self) -> None:
         return self.outf
 
 ##############################################################################
@@ -229,7 +240,6 @@ class nifti_binarize_threshold():
                  val_equal_above=1.0,
                  output_file='path'):
         import nibabel
-        import os
         self.outFile = output_file
         localizer_img = nibabel.load(image)
         localizer = localizer_img.get_fdata()
@@ -238,7 +248,7 @@ class nifti_binarize_threshold():
         locmask = nibabel.Nifti1Image(localizer, localizer_img.affine)
         nibabel.save(locmask, output_file)
 
-    def outfile(self: 'path'):
+    def outfile(self) -> None:
         return self.outFile
 
 ##############################################################################
@@ -257,7 +267,7 @@ class nifti_four_to_three:
             nib.save(img3d, os.path.join(out_directory, fname3d))
             self.listimg.append(os.path.join(out_directory, fname3d))
 
-    def list_3D_images(self: 'list_path'):
+    def list_3D_images(self) -> list[None]:
         return self.listimg
 
 ##############################################################################
@@ -284,5 +294,179 @@ class Nifti_rawInfo():
         hdr = img.header
         self.str = hdr.structarr[structarr].tolist()
 
-    def out_structarr(self: 'list_str'):
+    def out_structarr(self) -> list[str]:
         return self.str
+
+##############################################################################
+
+
+class Nifti_orientations_aff2axcodes():
+    def __init__(self, nii_image='path', **options):
+        import nibabel as nib
+        img = nib.load(nii_image)
+        self.axcodes = nib.orientations.aff2axcodes(img.affine, **options)
+
+    def axcodes(self) -> tuple:
+        return self.axcodes
+
+##############################################################################
+
+
+class Nifti_orientations_axcodes2ornt():
+    def __init__(self, axcodes=('F', 'L', 'U'), **options):
+        import nibabel as nib
+        self.ornt = nib.orientations.axcodes2ornt(axcodes, **options)
+
+    def ornt(self) -> list[list[float]]:
+        return self.ornt
+
+##############################################################################
+
+
+class Nifti_orientations_apply_orientation():
+    def __init__(self, nii_image='path', ornt=[[0.0]]):
+        import nibabel as nib
+        nii_img = nib.load(nii_image)
+        nii_data = nii_img.get_fdata()
+        self.tarr = nib.orientations.apply_orientation(nii_data, ornt)
+
+    def t_arr(self) -> list[list[float]]:
+        return self.tarr
+
+##############################################################################
+
+
+class Nifti_resize():
+    def __init__(self, nii_image='path', out_image='path', new_size=[128, 128, 32], center_correction=False):
+        import SimpleITK as sitk
+        img = sitk.ReadImage(nii_image)
+        old_spacing = img.GetSpacing()
+        old_size = img.GetSize()
+
+        new_spacing = [round(osz * ospc / nspc, 4)
+                       for osz, ospc, nspc in zip(old_size, old_spacing, new_size)]
+        old_direction = img.GetDirection()
+        if center_correction:
+            old_origin = img.GetOrigin()
+
+            old_center = [
+                old_origin[i] + 0.5 * old_spacing[i] * (old_size[i] - 1)
+                for i in range(3)
+            ]
+
+            new_origin = [
+                old_center[i] - 0.5 * new_spacing[i] * (new_size[i] - 1)
+                for i in range(3)
+            ]
+        else:
+            new_origin = img.GetOrigin()
+
+        resampled = sitk.Resample(
+            img,
+            new_size,
+            sitk.Transform(),
+            sitk.sitkLinear,
+            new_origin,
+            new_spacing,
+            old_direction,
+            0.0,
+            img.GetPixelID(),
+        )
+
+        sitk.WriteImage(resampled, out_image)
+        self.out_image = out_image
+
+    def nifti_resized(self) -> None:
+        return self.out_image
+
+##############################################################################
+
+
+class Nifti_resize_4d():
+    def __init__(self, nii_image='path', out_image='path', new_size=[128, 128, 32, 4], interpolation="enumerate(('linear', 'NearestNeighbor', 'BSpline'))"):
+        import SimpleITK as sitk
+        img = sitk.ReadImage(nii_image)
+
+        orig_size = list(img.GetSize())       # e.g. [110, 60, 23, 4]
+        orig_spacing = list(img.GetSpacing())  # e.g. [sx, sy, sz] ou [sx, sy, sz, st]
+        # orig_origin = img.GetOrigin()
+        # orig_direction = img.GetDirection()
+
+        print("original size :", orig_size)
+        print("original spacing:", orig_spacing)
+
+        # --- Dimension check ---
+        is_4d = len(orig_size) >= 4
+        n_timepoints = orig_size[3] if is_4d else 1
+        if is_4d and new_size[3] != n_timepoints:
+            new_size = (new_size[0], new_size[1], new_size[2], n_timepoints)
+        new_spacing = [round((orig_spacing[i] * orig_size[i]) / new_size[i], 10) for i in range(3)]
+        print("New spacing (mm) :", new_spacing)
+
+        ind = ['linear', 'NearestNeighbor', 'BSpline'].index(interpolation)
+        interp = [sitk.sitkLinear, sitk.sitkNearestNeighbor, sitk.sitkBSpline][ind]
+
+        def __make_resampler(output_size3, output_spacing3, output_origin, output_direction, interpolator=interp):
+            resampler = sitk.ResampleImageFilter()
+            resampler.SetInterpolator(interpolator)
+            resampler.SetOutputSpacing(output_spacing3)
+            resampler.SetSize(list(output_size3))
+            resampler.SetOutputOrigin(output_origin)
+            resampler.SetOutputDirection(output_direction)
+            resampler.SetDefaultPixelValue(0)
+            return resampler
+
+        resampled_vols = []
+
+        if is_4d:
+            for t in range(n_timepoints):
+                print(f"Resampling volume {t + 1}/{n_timepoints}...")
+                extract_size = [orig_size[0], orig_size[1], orig_size[2], 0]
+                extract_index = [0, 0, 0, t]
+                vol3d = sitk.Extract(img, size=extract_size, index=extract_index)
+
+                resampler = __make_resampler(new_size[:3], new_spacing,
+                                             vol3d.GetOrigin(), vol3d.GetDirection(),
+                                             interpolator=sitk.sitkBSpline)
+                vol3d_res = resampler.Execute(vol3d)
+                resampled_vols.append(vol3d_res)
+
+            print("4D reconstruction...")
+            resampled_img = sitk.JoinSeries(resampled_vols)
+
+            # --- Création correcte des métadonnées 4D ---
+            vol0 = resampled_vols[0]
+            origin3 = list(vol0.GetOrigin())
+            spacing3 = list(vol0.GetSpacing())
+            direction3 = list(vol0.GetDirection())
+
+            # Espacement temporel (si dispo sinon 1.0)
+            time_spacing = 1.0
+            if len(orig_spacing) >= 4:
+                time_spacing = orig_spacing[3]
+
+            origin4 = origin3 + [0.0]
+            spacing4 = spacing3 + [time_spacing]
+            direction4 = [
+                direction3[0], direction3[1], direction3[2], 0.0,
+                direction3[3], direction3[4], direction3[5], 0.0,
+                direction3[6], direction3[7], direction3[8], 0.0,
+                0.0, 0.0, 0.0, 1.0
+            ]
+
+            resampled_img.SetOrigin(tuple(origin4))
+            resampled_img.SetSpacing(tuple(spacing4))
+            resampled_img.SetDirection(tuple(direction4))
+
+        else:
+            print("Image 3D detected.")
+            resampler = __make_resampler(new_size[:3], new_spacing,
+                                         img.GetOrigin(), img.GetDirection(),
+                                         interpolator=sitk.sitkBSpline)
+            resampled_img = resampler.Execute(img)
+
+        sitk.WriteImage(resampled_img, out_image)
+        self.out_image = out_image
+
+    def nifti_resized(self) -> None:
+        return self.out_image

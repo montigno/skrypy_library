@@ -23,7 +23,10 @@ class openImageJ():
                         "    Stack.setChannel(channels/2);\n"\
                         "run(\"Enhance Contrast\", \"saturated=0.35\");"\
                         "};"
-        proc = Popen(['ImageJ', '-eval', script_macro1 + script_macro])
+        try:
+            Popen(['ImageJ', '-eval', script_macro1 + script_macro])
+        except Exception:
+            Popen([os.environ['ImageJ'], '-eval', script_macro1 + script_macro])
 
 ##############################################################################
 
@@ -40,37 +43,47 @@ class openImagej_multiFiles():
                         "open(list[i]);\n"\
                         "run(\"Enhance Contrast\", \"saturated=0.35\");"\
                         "};"
-        proc = Popen(['ImageJ', '-eval', script_macro1 + script_macro])
+        try:
+            Popen(['ImageJ', '-eval', script_macro1 + script_macro])
+        except Exception:
+            Popen([os.environ['ImageJ'], '-eval', script_macro1 + script_macro])
 
 ##############################################################################
 
 
 class ImageJ_atlas():
     def __init__(self, atlas_template='path', atlas_label='path', label_txt='path'):
-        import subprocess
         from subprocess import Popen
         import os
+        import tempfile
+
         scriptfile = 'open("' + atlas_label + '");\nrun(\"Enhance Contrast\", \"saturated=0.35\");\n'\
                      'open("' + atlas_template + '");\nrun(\"Enhance Contrast\", \"saturated=0.35\");\n'
         script = 'var lines=split(File.openAsString("' + label_txt + '"), "\\n");\n ij.run("Synchronize Windows"); \n'
         filemacro = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'macros', 'Atlas.txt')
         scriptmacro = open(filemacro, 'r').read()
         script += scriptmacro + '\n'
-
-        file_tmp = open("/tmp/tmp.txt", "w")
+        tmp_folder = tempfile.gettempdir()
+        tmp_file = os.path.join(tmp_folder, 'tmp.txt')
+        file_tmp = open(tmp_file, "w")
         file_tmp.write(script)
         script = 'run("Synchronize Windows");\n'\
-                 'run("Install...", "install=/tmp/tmp.txt");'
-        subprocess.Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+                 'run("Install...", "install=' + tmp_file + '");'
+        # Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+        try:
+            Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+        except Exception:
+            Popen([os.environ['ImageJ'], '-eval', scriptfile, '-eval', script], shell=False)
 
 ##############################################################################
 
 
 class ImageJ_atlas_reg():
     def __init__(self, file_in='path', atlas_template='path', atlas_label='path', label_txt='path', other_files=['path']):
-        import subprocess
         from subprocess import Popen
         import os
+        import tempfile
+
         scriptfile = 'open("' + file_in + '");\nrun(\"Enhance Contrast\", \"saturated=0.35\");\n'\
                      'open("' + atlas_label + '");\nrun(\"Enhance Contrast\", \"saturated=0.35\");\n'\
                      'rename("atlas");\n'\
@@ -88,11 +101,18 @@ class ImageJ_atlas_reg():
         scriptmacro = open(filemacro, 'r').read()
         script += scriptmacro + '\n'
 
-        file_tmp = open("/tmp/tmp.txt", "w")
+        tmp_folder = tempfile.gettempdir()
+        tmp_file = os.path.join(tmp_folder, 'tmp.txt')
+        file_tmp = open(tmp_file, "w")
         file_tmp.write(script)
         script = 'run("Synchronize Windows");\n'\
-                 'run("Install...", "install=/tmp/tmp.txt");'
-        subprocess.Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+                 'run("Install...", "install=' + tmp_file + '");'
+        # Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+        try:
+            Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+        except Exception:
+            Popen([os.environ['ImageJ'], '-eval', scriptfile, '-eval', script], shell=False)
+
 
 ##############################################################################
 
@@ -102,7 +122,11 @@ class ImageJ_macro():
         from subprocess import Popen
         import os
         option = '-macro'
-        Popen(['ImageJ', option, file_macro])
+        # Popen(['ImageJ', option, file_macro])
+        try:
+            Popen(['ImageJ', option, file_macro])
+        except Exception:
+            Popen([os.environ['ImageJ'], option, file_macro])
 
 ##############################################################################
 
@@ -113,7 +137,10 @@ class ImageJ_macrofile():
         import os
         option = '-macro'
 #         subprocess.call(['java','-jar',pathImageJ,pathImage,option,filemacro], shell=False)
-        Popen(['ImageJ', pathImage, option, filemacro])
+        try:
+            Popen(['ImageJ', pathImage, option, filemsacro])
+        except Exception:
+            Popen([os.environ['ImageJ'], pathImage, option, filemsacro])
 
 ##############################################################################
 
@@ -127,7 +154,7 @@ class ImageJ_read_roi():
         elif roiIJ_file.endswith('.zip'):
             self.list_rois = read_roi.read_roi_zip(roiIJ_file)
 
-    def list_Rois(self: 'dict'):
+    def list_Rois(self) -> dict:
         return self.list_rois
 
 ##############################################################################
@@ -140,9 +167,9 @@ class ImageJ_get_pixels_in_roi():
         import numpy as np
 
         try:
-            nx, ny, ns, nt = image_in.shape
-        except Exception as err:
-            nx, ny, ns = image_in.shape
+            nx, ny, _, _ = image_in.shape
+        except Exception:
+            nx, ny, _ = image_in.shape
 
         xq, yq = np.mgrid[:nx, :ny]
         coord_img = np.hstack((xq.reshape(-1, 1), yq.reshape(-1, 1)))
@@ -164,7 +191,7 @@ class ImageJ_get_pixels_in_roi():
                 self.coord_masks = np.array(self.coord_masks)
                 break
 
-    def coord_mask(self: 'array_float'):
+    def coord_mask(self) -> list[list[float]]:
         return self.coord_masks
 
 ##############################################################################
@@ -176,7 +203,7 @@ class ImageJ_get_coord_roi():
         import read_roi
         import numpy as np
 
-        nx, ny, ns, nt = image_in.shape
+        nx, ny, _, _ = image_in.shape
 
         xq, yq = np.mgrid[:nx, :ny]
         coord_img = np.hstack((xq.reshape(-1, 1), yq.reshape(-1, 1)))
@@ -192,7 +219,7 @@ class ImageJ_get_coord_roi():
                 self.coord_masks = ref.mask_coord()
                 break
 
-    def coord_roi(self: 'list_float'):
+    def coord_roi(self) -> list[float]:
         return self.coord_masks
 
 ##############################################################################
@@ -200,8 +227,14 @@ class ImageJ_get_coord_roi():
 
 class ImageJ_command():
     def __init__(self, command='', verbose=True):
-        import subprocess
-        subprocess.Popen(['ImageJ', '-eval', command], shell=False)
+        from subprocess import Popen
+        import os
+        # subprocess.Popen(['ImageJ', '-eval', command], shell=False)
+        try:
+            Popen(['ImageJ', '-eval', command], shell=False)
+        except Exception:
+            Popen([os.environ['ImageJ'], '-eval', command], shell=False)
+
         if verbose:
             print(command)
 
@@ -219,9 +252,10 @@ class ImageJ_RelaxationTime_profil():
                  time_type="enumerate(('EchoTime',\
                                        'RepetitionTime',\
                                        'InversionTime'))"):
-        import subprocess
         from subprocess import Popen
         import os
+        import tempfile
+
         scriptfile = 'open("' + image + '");run(\"Enhance Contrast\", \"saturated=0.35\");\n'\
                      'open("' + relax_Time + '");run(\"Enhance Contrast\", \"saturated=0.35\");\n'\
                      'open("' + Intensity + '");run(\"Enhance Contrast\", \"saturated=0.35\");\n'
@@ -246,7 +280,13 @@ class ImageJ_RelaxationTime_profil():
         scriptmacro = open(filemacro, 'r').read()
         script += '\nvar Times=newArray(' + str(ListTime).strip('[]') + ');\n' + scriptmacro + '\n'
 
-        file_tmp = open("/tmp/tmp.txt", "w")
+        tmp_folder = tempfile.gettempdir()
+        tmp_file = os.path.join(tmp_folder, 'tmp.txt')
+        file_tmp = open(tmp_file, "w")
         file_tmp.write(script)
-        script = 'run("Install...", "install=/tmp/tmp.txt");'
-        subprocess.Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+        script = 'run("Install...", "install=' + tmp_file + '");'
+        # Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+        try:
+            Popen(['ImageJ', '-eval', scriptfile, '-eval', script], shell=False)
+        except Exception:
+            Popen([os.environ['ImageJ'], '-eval', scriptfile, '-eval', script], shell=False)
