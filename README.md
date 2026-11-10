@@ -5,8 +5,8 @@ Modules should be placed in the 'modules' folder and submodules in the 'submodul
 
 <p></p>
 
-        10/11/2026: version 26.11.10a
-        - Library update
+	10/11/2026: version 26.11.10a
+	- Library update
 
 <p></p>
 
