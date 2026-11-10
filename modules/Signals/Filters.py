@@ -1,7 +1,15 @@
 class signal_filter_butter:
-    def __init__(self, data=[0.0], cutoff=2.0, fs=30.0, order=2, type="enumerate(('low', 'high'))"):
-        from scipy.signal import butter, filtfilt
+    """
+    docstring to be completed
+    """
+    def __init__(self,
+                 data=[0.0],
+                 cutoff=2.0,
+                 fs=30.0,
+                 order=2,
+                 type="enumerate(('low', 'high'))"):
 
+        from scipy.signal import butter, filtfilt
         nyq = 0.5 * fs  # Nyquist Frequency
         normal_cutoff = cutoff / nyq
         b, a = butter(order, normal_cutoff, btype=type, analog=False)
@@ -14,7 +22,13 @@ class signal_filter_butter:
 
 
 class signal_filter_moving_averages:
-    def __init__(self, data_in=[0.0], window_size=5):
+    """
+    docstring to be completed
+    """
+    def __init__(self,
+                 data_in=[0.0],
+                 window_size=5):
+
         import numpy as np
         self.res = np.copy(data_in)
         for i in range(1, len(data_in) - 1):
@@ -25,5 +39,26 @@ class signal_filter_moving_averages:
 
     def mov_average(self) -> list[float]:
         return self.res
+
+##############################################################################
+
+
+class signal_filter_polynomial:
+    """
+    docstring to be completed
+    """
+    def __init__(self,
+                 x=[0.0],
+                 y=[0.0],
+                 degree=3):
+
+        import numpy as np
+        x_pol = x.copy()
+        y_pol = y.copy()
+        coeff = np.polyfit(x_pol, y_pol, deg=degree)
+        self.y_pol = np.polyval(coeff, x_pol)
+
+    def y_polynomial(self) -> list[float]:
+        return self.y_pol
 
 ##############################################################################

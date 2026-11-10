@@ -1,6 +1,12 @@
 class openCV_camera():
+    """
+    docstring to be completed
+    """
 
-    def __init__(self, rect=(100, 100, 300, 300), filter="enumerate(('Canny', 'Schtroumpf'))"):
+    def __init__(self,
+                 rect=(100, 100, 300, 300),
+                 filter="enumerate(('Canny', 'Schtroumpf'))"):
+
         import cv2
 
         self.rect = rect
@@ -21,8 +27,8 @@ class openCV_camera():
         def __moveWindow(event, x, y, flags, param):
             if event == cv2.EVENT_LBUTTONDOWN:
                 if (
-                    x >= self.upper_left[0] and x <= self.bottom_right[0]
-                    and y >= self.upper_left[1] and y <= self.bottom_right[1]
+                    x >= self.upper_left[0] and x <= self.bottom_right[0] and
+                    y >= self.upper_left[1] and y <= self.bottom_right[1]
                 ):
                     self.click_hold = True
             elif event == cv2.EVENT_MOUSEMOVE:
@@ -63,8 +69,13 @@ class openCV_camera():
 
 
 class openCV_screen():
+    """
+    docstring to be completed
+    """
 
-    def __init__(self, rect=(100, 100, 300, 300), filter="enumerate(('NoFilter', 'Canny'))"):
+    def __init__(self,
+                 rect=(100, 100, 300, 300),
+                 filter="enumerate(('NoFilter', 'Canny'))"):
 
         import numpy as np
         import cv2

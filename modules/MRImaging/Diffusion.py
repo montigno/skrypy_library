@@ -1,7 +1,14 @@
 class BrukerInformationParser():
+    """
+    docstring to be completed
+    """
 
-    def __init__(self, methodFileName='path', acqpFileName='path', visuParsFileName='path',
+    def __init__(self,
+                 methodFileName='path',
+                 acqpFileName='path',
+                 visuParsFileName='path',
                  applyVisuCoreTransformation=True):
+
         import math
 
         global math
@@ -25,24 +32,24 @@ class BrukerInformationParser():
                           [float(0), float(0), float(1)]]
         # and customizing it according to slice and read orientations
         if (
-            self._sliceOrientation == 'sagittal'
-            and self._readOrientation == 'H_F'
+            self._sliceOrientation == 'sagittal' and
+            self._readOrientation == 'H_F'
         ):
             self._rotation = [[float(0), float(0), float(1)],
                               [float(0), float(-1), float(0)],
                               [float(1), float(0), float(0)]]
 
         elif (
-            self._sliceOrientation == 'coronal'
-            and self._readOrientation == 'H_F'
+            self._sliceOrientation == 'coronal' and
+            self._readOrientation == 'H_F'
         ):
             self._rotation = [[float(0), float(1), float(0)],
                               [float(0), float(0), float(1)],
                               [float(1), float(0), float(0)]]
 
         elif (
-            self._sliceOrientation == 'axial'
-            and self._readOrientation == 'L_R'
+            self._sliceOrientation == 'axial' and
+            self._readOrientation == 'L_R'
         ):
             self._rotation = [[float(0), float(1), float(0)],
                               [float(0), float(0), float(1)],
@@ -93,8 +100,8 @@ class BrukerInformationParser():
                                   [len('##$' + fieldName + '='): -1])
         endIndex = startIndex + 1
         while (
-            '##$' not in fileNameLines[endIndex]
-            and '$$' not in fileNameLines[endIndex]
+                '##$' not in fileNameLines[endIndex] and
+                '$$' not in fileNameLines[endIndex]
         ):
             lines.append(fileNameLines[endIndex][: -1])
             endIndex += 1
